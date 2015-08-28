@@ -1,5 +1,10 @@
 import dateutil.parser
 
+try:
+    from flask import request, make_response, jsonify
+except ImportError:
+    pass
+
 def _alexa_dict(mapping={}):
     return {k: v.get("value", None) for k, v in mapping.items()}
 
@@ -231,3 +236,19 @@ class Skill:
                 return self._on_end(request)
             else:
                 raise UnhandledRequestException("SessionEndedRequest has no handler")
+
+    def flask_target(self):
+        if request:
+            data = request.get_json()
+            if data:
+                try:
+                    result = self.handle_request(data, dict(request.headers)) or Response(request)
+                    return jsonify(result)
+                except InvalidApplication:
+                    return make_response(("This application is not allowed to access this skill.", 403, []))
+                except UnhandledRequestException as e:
+                    return make_response((str(e), 404, []))
+                except Exception as e:
+                    return make_response((str(e), 500, []))
+        else:
+            raise ImportError("Flask was not imported")
