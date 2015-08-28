@@ -192,7 +192,7 @@ class Skill:
     def launch(self, target):
         self._on_launch = target
 
-        return launch
+        return target
 
     # Passthrough Decorator
     def end(self, target):
