@@ -177,6 +177,18 @@ class IntentRequest(Request):
         req = data.get("request", {})
         self.intent = Intent(req.get("intent"))
 
+    def data(self):
+        """Return combined dictionary of slots and session attributes.
+
+        If there is a slot and session attribute with the same name,
+the slot will take precedence.
+
+        """
+        res = dict(self.session.attributes)
+        res.update(self.intent.slots)
+
+        return res
+
 class InvalidApplication(Exception):
     pass
 
