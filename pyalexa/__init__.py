@@ -108,7 +108,8 @@ class Response:
         }
 
         for part in self.parts:
-            res["response"].update(part.packed())
+            if part:
+                res["response"].update(part.packed())
 
         return res
 
