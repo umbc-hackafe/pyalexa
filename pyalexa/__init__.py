@@ -201,9 +201,11 @@ class Skill:
         return target
 
     # Passthrough Decorator
-    def intent(self, intent_name):
+    def intent(self, *intent_names):
         def decorator(target=None, *args, **kwargs):
-            self.register_intent(intent_name, target)
+            for name in intent_names:
+                self.register_intent(name, target)
+
             return target
         return decorator
 
