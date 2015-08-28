@@ -209,8 +209,6 @@ class Skill:
         if self.config["validate"] and self.config["app_id"]:
             if self.config["app_id"] != request.app_id:
                 raise InvalidApplication("App ID '{}' does not match configured value '{}'".format(request.app_id, self.config["app_id"]))
-        else:
-            print("WARN: App ID not validated! You should configure 'app_id'")
 
     def handle_request(self, data, headers={}):
         request = Request.parse(data)
