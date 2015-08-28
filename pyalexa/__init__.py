@@ -26,6 +26,12 @@ class Session:
     def __delitem__(self, key):
         del self.attributes[key]
 
+    def __contains__(self, key):
+        return key in self.attributes
+
+    def get(self, key, default=None):
+        return self.attributes.get(key, default)
+
     def items(self):
         return self.attributes.items()
 
