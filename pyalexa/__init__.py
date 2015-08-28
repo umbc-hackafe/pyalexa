@@ -92,7 +92,7 @@ class Card:
         }
 
 class Response:
-    def __init__(self, request, end=False, *parts):
+    def __init__(self, request, *parts, end=False):
         self.end = end
 
         self.request = request
