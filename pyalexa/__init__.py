@@ -78,8 +78,10 @@ class Card:
         }
 
 class Response:
-    def __init__(self, end=False, *parts):
+    def __init__(self, request, end=False, *parts):
         self.end = end
+
+        self.request = request
 
         if parts:
             self.parts = parts
@@ -88,11 +90,15 @@ class Response:
 
     def packed(self):
         res = {
-            "shouldEndSession": self.end
+            "version": self.skill,
+            "sessionAttributes": self.request.session.attributes,
+            "response": {
+                "shouldEndSession": self.end
+            }
         }
 
         for part in self.parts:
-            res.update(part.packed())
+            res["response"].update(part.packed())
 
         return res
 
@@ -127,7 +133,7 @@ class Request:
         self.headers = {}
 
     def response(self, end=False, speech=None, card=None, reprompt=None):
-        return Response(speech, card, reprompt, end=end).packed()
+        return Response(self, speech, card, reprompt, end=end).packed()
 
 class LaunchRequest(Request):
     """Apparently identical to Request in functionality."""
@@ -210,6 +216,7 @@ class Skill:
     def handle_request(self, data, headers={}):
         request = Request.parse(data)
         request.headers.update(headers)
+        request.skill = self
         
         if request.request_type == Request.LAUNCH:
             if self._on_launch:
