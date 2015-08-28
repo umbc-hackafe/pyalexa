@@ -249,12 +249,11 @@ class Skill:
     # Passthrough Decorator
     def intent(self, *intent_names):
         def decorator(target=None, *args, **kwargs):
+            LOG.debug("Registered %s as intent for targets %s", target, intent_names)
             for name in intent_names:
                 self.register_intent(name, target)
 
             return target
-
-        LOG.debug("Registered %s as intent for targets %s", target, intent_names)
 
         return decorator
 
