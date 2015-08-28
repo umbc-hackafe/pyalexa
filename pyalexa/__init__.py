@@ -156,7 +156,7 @@ class Request:
             speech = Speech(speech)
         if isinstance(reprompt, str):
             reprompt = Reprompt(reprompt)
-        return Response(self, end=end, speech, reprompt, card).packed()
+        return Response(self, speech, reprompt, card, end=end).packed()
 
 class LaunchRequest(Request):
     """Apparently identical to Request in functionality."""
