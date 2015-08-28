@@ -1,8 +1,12 @@
 import dateutil.parser
+import logging
+
+LOG = logging.getLogger("pyalexa")
 
 try:
     from flask import request, make_response, jsonify
 except ImportError:
+    LOG.warn("Could not import flask; functionality disabled")
     pass
 
 def _alexa_dict(mapping={}):
@@ -121,13 +125,17 @@ class Request:
     @classmethod
     def parse(cls, data):
         if "request" in data and "type" in data["request"]:
+            LOG.debug("Parsing request")
             kind = data["request"]["type"]
 
             if kind == Request.LAUNCH:
+                LOG.debug("Request is LaunchRequest")
                 return LaunchRequest(data)
             elif kind == Request.INTENT:
+                LOG.debug("Request is IntentRequest")
                 return IntentRequest(data)
             elif kind == Request.SESSION_ENDED:
+                LOG.debug("Request is SessionEndedRequest")
                 return SessionEndedRequest(data)
         raise ValueError("data is not a valid request")
 
@@ -190,6 +198,17 @@ the slot will take precedence.
 
         return res
 
+    def save_slots(self, *names):
+        """Add all or some slots as session attributes"""
+
+        if names:
+            LOG.debug("Saving slots %s", names)
+            for name in names:
+                self.session[name] = self.intent.slots[name]
+        else:
+            LOG.debug("Saving all slots")
+            self.session.attributes.update(self.intent.slots)
+
 class InvalidApplication(Exception):
     pass
 
@@ -215,11 +234,15 @@ class Skill:
     def launch(self, target):
         self._on_launch = target
 
+        LOG.debug("Registered %s as launch target", target)
+
         return target
 
     # Passthrough Decorator
     def end(self, target):
         self._on_end = target
+
+        LOG.debug("Registered %s as session end target", target)
 
         return target
 
@@ -230,6 +253,9 @@ class Skill:
                 self.register_intent(name, target)
 
             return target
+
+        LOG.debug("Registered %s as intent for targets %s", target, intent_names)
+
         return decorator
 
     def register_intent(self, name, target):
@@ -270,10 +296,13 @@ class Skill:
                     result = self.handle_request(data, dict(request.headers)) or Response(request)
                     return jsonify(result)
                 except InvalidApplication:
+                    LOG.exception("Received a request from the wrong application")
                     return make_response(("This application is not allowed to access this skill.", 403, []))
                 except UnhandledRequestException as e:
+                    LOG.exception("Received a request for an intent that does not exist")
                     return make_response((str(e), 404, []))
                 except Exception as e:
+                    LOG.exception("Unhandled exception in flask_target")
                     return make_response((str(e), 500, []))
         else:
             raise ImportError("Flask was not imported")
