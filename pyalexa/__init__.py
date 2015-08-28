@@ -104,7 +104,7 @@ class Response:
 
     def packed(self):
         res = {
-            "version": self.skill,
+            "version": self.request.skill.version,
             "sessionAttributes": self.request.session.attributes,
             "response": {
                 "shouldEndSession": self.end
@@ -216,7 +216,8 @@ class UnhandledRequestException(Exception):
     pass
 
 class Skill:
-    def __init__(self, config={}, schema={}, validate=True, app_id=None):
+    def __init__(self, config={}, schema={}, validate=True, app_id=None,
+                 version="0.0.0"):
         self.config = config
         self.schema = schema
 
@@ -225,6 +226,11 @@ class Skill:
 
         if "app_id" not in self.config:
             self.config["app_id"] = app_id
+
+        if "version" in self.config:
+            version = self.config["version"]
+
+        self.version = version
 
         self._intents = {}
 
