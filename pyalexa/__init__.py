@@ -1,5 +1,4 @@
 import dateutil.parser
-import collections
 
 def _alexa_dict(mapping={}):
     return {k: v.get("value", None) for k, v in mapping.items()}
