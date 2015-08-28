@@ -142,8 +142,12 @@ class Request:
 
         self.headers = {}
 
-    def response(self, end=False, speech=None, card=None, reprompt=None):
-        return Response(self, speech, card, reprompt, end=end).packed()
+    def response(self, speech=None, reprompt=None, card=None, end=False):
+        if isinstance(speech, str):
+            speech = Speech(speech)
+        if isinstance(reprompt, str):
+            reprompt = Reprompt(reprompt)
+        return Response(self, speech, reprompt, card, end=end).packed()
 
 class LaunchRequest(Request):
     """Apparently identical to Request in functionality."""
