@@ -25,7 +25,7 @@ class Session:
         return self.attributes.get(key)
 
     def __setitem__(self, key, val):
-        self.attributes.set(key, val)
+        self.attributes[key] = val
 
     def __delitem__(self, key):
         del self.attributes[key]
