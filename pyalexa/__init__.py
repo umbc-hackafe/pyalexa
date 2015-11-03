@@ -151,6 +151,10 @@ class Request:
 
         self.headers = {}
 
+    @property
+    def app_id(self):
+        return self.session.application_id
+
     def response(self, speech=None, reprompt=None, card=None, end=False):
         if isinstance(speech, str):
             speech = Speech(speech)
