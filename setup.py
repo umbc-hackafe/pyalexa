@@ -5,7 +5,9 @@ setup(
     packages=['pyalexa'],
     version="0.1.0",
     description="Python API for writing new Amazon Echo skills",
-    long_description="""I should write this
+    long_description="""Provides a simple, flask-style framework for creating
+    skills for the Amazon Echo. Has built-in support for parsing and validating
+    requests, as well as creating responses in several formats.
     """,
     license="""The MIT License (MIT)
 
