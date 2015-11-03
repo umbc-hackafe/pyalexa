@@ -275,6 +275,9 @@ class Skill:
         request = Request.parse(data)
         request.headers.update(headers)
         request.skill = self
+
+        if self.config["validate"]:
+            self.validate_request(request)
         
         if request.request_type == Request.LAUNCH:
             if self._on_launch:
