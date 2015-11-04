@@ -16,7 +16,7 @@ class Session:
     def __init__(self, data):
         self.new = data.get("new", False)
         self.id = data.get("sessionId")
-        self.attributes = data.get("attributes", {})
+        self.attributes = data.get("attributes") or {}
         self.application_id = data.get("application", {}).get("applicationId")
         self.user_id = data.get("user", {}).get("userId")
 
