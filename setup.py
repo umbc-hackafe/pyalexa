@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='pyalexa',
     packages=['pyalexa'],
-    version="0.1.0",
+    version="0.1.1",
     description="Python API for writing new Amazon Echo skills",
     long_description="""Provides a simple, flask-style framework for creating
     skills for the Amazon Echo. Has built-in support for parsing and validating
