@@ -1,6 +1,8 @@
 import dateutil.parser
 import logging
 
+from . import ssml
+
 LOG = logging.getLogger("pyalexa")
 
 try:
@@ -45,6 +47,9 @@ class ResponsePart:
 
 class Speech(ResponsePart):
     PLAIN_TEXT = "PlainText"
+    SSML = "SSML"
+    __TYPES = {PLAIN_TEXT: 'text',
+               SSML: 'ssml'}
 
     def __init__(self, text, type=None):
         if not type:
@@ -57,9 +62,49 @@ class Speech(ResponsePart):
         return {
             "outputSpeech": {
                 "type": self.type,
-                "text": self.text
+                Speech.__TYPES[self.type]: self.text
             }
         }
+
+class SSML(Speech):
+    def __init__(self, text=None):
+        super().__init__(self, type=Speech.SSML)
+
+        self._parts = []
+
+        if text is not None:
+            self._parts.append(text)
+
+    def plain(self, text):
+        self._parts.append(ssml.plain(text))
+        return self
+
+    def paragraph(self, text):
+        self._parts.append(ssml.paragraph(text))
+        return self
+
+    def sentence(self, text):
+        self._parts.append(ssml.sentence(text))
+        return self
+
+    def brk(self, strength=None, time=None):
+        self._parts.append(ssml.brk(strength=strength, time=time))
+        return self
+
+    def say_as(self, text, interpret_as=None, format=None):
+        self._parts.append(ssml.say_as(text, attrs={'interpret-as': interpret_as, 'format': format}))
+        return self
+
+    def phoneme(self, text, alphabet=None, ph=None):
+        self._parts.append(ssml.phoneme(text, alphabet=alphabet, ph=ph))
+        return self
+
+    def w(self, text, role=None):
+        self._parts.append(ssml.w(text, role=role))
+        return self
+
+    def __str__(self):
+        return '<speak>' + ''.join((str(p) for p in self._parts)) + '</speak>'
 
 class Reprompt(ResponsePart):
     def __init__(self, output):
