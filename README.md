@@ -33,12 +33,14 @@ flask library. There are three decorators provided: `launch`, for the
 
     @skill.launch
     def launch(request):
-        return request.response(speech="Welcome to pyalexa, you can say hello",
-                                reprompt="You can say hello")
+        return request.response(
+            speech="Welcome to pyalexa, you can say hello",
+            reprompt="You can say hello"
+        )
 
     @skill.end
     def end(request):
-        print("Hey we can do stuff here")
+        print("We can do cleanup stuff here")
 
     @skill.intent("HelloWorldIntent")
     def hello_world(request):
